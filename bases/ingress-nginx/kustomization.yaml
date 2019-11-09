@@ -1,0 +1,10 @@
+namespace: ingress-nginx
+commonLabels:
+  app.kubernetes.io/name: ingress-nginx
+  app.kubernetes.io/part-of: ingress-nginx
+resources:
+- cloud-generic.yaml
+- configmap.yaml
+- rbac.yaml
+- with-rbac.yaml
+- namespace.yaml
