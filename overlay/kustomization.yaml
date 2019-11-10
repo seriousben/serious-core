@@ -5,3 +5,4 @@ commonAnnotations:
 resources:
 - ../bases/ingress-nginx
 - ../bases/external-dns
+- ../bases/cert-manager
