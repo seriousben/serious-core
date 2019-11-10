@@ -4,3 +4,4 @@ commonAnnotations:
   seriousben.com/repo: "https://github.com/seriousben/serious-core"
 resources:
 - ../bases/ingress-nginx
+- ../bases/external-dns

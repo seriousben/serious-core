@@ -12,6 +12,6 @@ For 0.26.1:
 
 Also copy manifests from https://github.com/kubernetes/ingress-nginx/blob/master/deploy/static/provider.
 
-For 0.16.1:
+For 0.26.1:
 
 * cloud-generic.yaml

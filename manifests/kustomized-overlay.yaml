@@ -4,10 +4,33 @@ metadata:
   annotations:
     seriousben.com/repo: https://github.com/seriousben/serious-core
   labels:
+    app.kubernetes.io/name: external-dns
+    app.kubernetes.io/part-of: external-dns
+    env: prod
+  name: external-dns
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  annotations:
+    seriousben.com/repo: https://github.com/seriousben/serious-core
+  labels:
     app.kubernetes.io/name: ingress-nginx
     app.kubernetes.io/part-of: ingress-nginx
     env: prod
   name: ingress-nginx
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  annotations:
+    seriousben.com/repo: https://github.com/seriousben/serious-core
+  labels:
+    app.kubernetes.io/name: external-dns
+    app.kubernetes.io/part-of: external-dns
+    env: prod
+  name: external-dns
+  namespace: external-dns
 ---
 apiVersion: v1
 kind: ServiceAccount
@@ -63,6 +86,48 @@ rules:
   - endpoints
   verbs:
   - get
+---
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: ClusterRole
+metadata:
+  annotations:
+    seriousben.com/repo: https://github.com/seriousben/serious-core
+  labels:
+    app.kubernetes.io/name: external-dns
+    app.kubernetes.io/part-of: external-dns
+    env: prod
+  name: external-dns
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - services
+  verbs:
+  - get
+  - watch
+  - list
+- apiGroups:
+  - ""
+  resources:
+  - pods
+  verbs:
+  - get
+  - watch
+  - list
+- apiGroups:
+  - extensions
+  resources:
+  - ingresses
+  verbs:
+  - get
+  - watch
+  - list
+- apiGroups:
+  - ""
+  resources:
+  - nodes
+  verbs:
+  - list
 ---
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: ClusterRole
@@ -143,6 +208,25 @@ subjects:
 - kind: ServiceAccount
   name: nginx-ingress-serviceaccount
   namespace: ingress-nginx
+---
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: ClusterRoleBinding
+metadata:
+  annotations:
+    seriousben.com/repo: https://github.com/seriousben/serious-core
+  labels:
+    app.kubernetes.io/name: external-dns
+    app.kubernetes.io/part-of: external-dns
+    env: prod
+  name: external-dns-viewer
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: external-dns
+subjects:
+- kind: ServiceAccount
+  name: external-dns
+  namespace: external-dns
 ---
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: ClusterRoleBinding
@@ -310,7 +394,47 @@ spec:
             drop:
             - ALL
           runAsUser: 33
-      nodeSelector:
-        kubernetes.io/os: linux
       serviceAccountName: nginx-ingress-serviceaccount
       terminationGracePeriodSeconds: 300
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  annotations:
+    seriousben.com/repo: https://github.com/seriousben/serious-core
+  labels:
+    app.kubernetes.io/name: external-dns
+    app.kubernetes.io/part-of: external-dns
+    env: prod
+  name: external-dns
+  namespace: external-dns
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: external-dns
+      app.kubernetes.io/part-of: external-dns
+      env: prod
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      annotations:
+        seriousben.com/repo: https://github.com/seriousben/serious-core
+      labels:
+        app: external-dns
+        app.kubernetes.io/name: external-dns
+        app.kubernetes.io/part-of: external-dns
+        env: prod
+    spec:
+      containers:
+      - args:
+        - --source=ingress
+        - --domain-filter=seriousben.com
+        - --provider=google
+        - --google-project=projects-seriousben
+        - --registry=txt
+        - --txt-owner-id=seriousben
+        - --dry-run
+        image: registry.opensource.zalan.do/teapot/external-dns:v0.5.17
+        name: external-dns
+      serviceAccountName: external-dns
