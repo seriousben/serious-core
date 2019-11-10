@@ -1,0 +1,8 @@
+namespace: external-dns
+commonLabels:
+  app.kubernetes.io/name: external-dns
+  app.kubernetes.io/part-of: external-dns
+resources:
+- rbac.yaml
+- namespace.yaml
+- deployment.yaml

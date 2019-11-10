@@ -1,6 +1,6 @@
 # serious-core
 
-Core services of very serious projects.
+Core services for serious projects.
 
 ## Kustomizing
 
