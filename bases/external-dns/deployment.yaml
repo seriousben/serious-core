@@ -21,4 +21,4 @@ spec:
         - --google-project=projects-seriousben
         - --registry=txt
         - --txt-owner-id=seriousben
-        - --dry-run
+        #- --dry-run

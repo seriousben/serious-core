@@ -1,0 +1,9 @@
+commonLabels:
+  app.kubernetes.io/name: cert-manager
+  app.kubernetes.io/part-of: cert-manager
+resources:
+- cert-manager.yaml
+# disabled because of kubectl apply --validate=false requirement
+#- crds.yaml
+- cluster-issuer-acme-staging.yaml
+- cluster-issuer-acme.yaml
