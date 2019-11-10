@@ -14,4 +14,4 @@ jobs:
           kustomize: 3.2.1
           command: |
             kustomize build overlay > build-kustomized-overlay.yaml
-            diff build-kustomized-overlay.yaml manifests/kustomized-overlay.yaml
+            diff -u build-kustomized-overlay.yaml manifests/kustomized-overlay.yaml

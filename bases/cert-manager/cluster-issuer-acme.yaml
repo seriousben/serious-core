@@ -5,7 +5,7 @@ metadata:
 spec:
   acme:
     server: https://acme-v02.api.letsencrypt.org/directory
-    email: boudreau.benjamin@gmail.com-proutt
+    email: boudreau.benjamin@gmail.com
 
     # Name of a secret used to store the ACME account private key
     privateKeySecretRef:
